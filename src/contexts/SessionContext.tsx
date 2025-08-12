@@ -1,5 +1,12 @@
-import { Session } from "inspector/promises";
+import { setCookie } from "nookies";
 import {createContext, ReactNode, useContext, useState } from "react";
+
+const CESUL_USER = "cesul.user";
+
+type Credentials = {
+  username: string;
+  password: string;
+}
 
 type User = {
   id: string;
@@ -16,6 +23,14 @@ type SessionContextData = {
 
 const SessionContext = createContext({} as SessionContextData);
 
+export async function signIn({ username, password} : Credentials){
+
+}
+
+export async function signOut(){
+
+}
+
 interface SessionProviderProps{
   children: ReactNode;
 }
@@ -24,6 +39,17 @@ export function SessionProvider({children}: SessionProviderProps) {
   const [user, setUser] = useState<User>({} as User)
 
   async function updateUser(user: User) {
+    createCookieUser(user);
+  }
+
+  async function createCookieUser(user: User){
+    setCookie(null, CESUL_USER, JSON.stringify(user), {
+      path: "/",
+      httpOnly: false,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Strict",
+    });
+
     setUser(user);
   }
 
