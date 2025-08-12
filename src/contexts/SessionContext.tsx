@@ -1,4 +1,5 @@
-import { createContext } from "react";
+import { Session } from "inspector/promises";
+import {createContext, ReactNode, useContext, useState } from "react";
 
 type User = {
   id: string;
@@ -13,4 +14,24 @@ type SessionContextData = {
   updateUser: (user: User) => Promise<void>
 }
 
-const sessionContext = createContext({} as SessionContextData);
+const SessionContext = createContext({} as SessionContextData);
+
+interface SessionProviderProps{
+  children: ReactNode;
+}
+
+export function SessionProvider({children}: SessionProviderProps) {
+  const [user, setUser] = useState<User>({} as User)
+
+  async function updateUser(user: User) {
+    setUser(user);
+  }
+
+  return(
+    <SessionContext.Provider value={{ user, updateUser }}>
+      {children}
+    </SessionContext.Provider>
+  );
+}
+
+export const useSession = () => useContext(SessionContext)
